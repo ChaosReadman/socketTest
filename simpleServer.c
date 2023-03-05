@@ -79,18 +79,21 @@ int main(int argc, char **argv)
 
     configure_context(ctx);
 
-    sock = create_socket(4433);
+    sock = create_socket(12345);
 
     /* Handle connections */
     while(1) {
+        printf("enter while\n");
         struct sockaddr_in addr;
         unsigned int len = sizeof(addr);
         SSL *ssl;
-        const char reply[] = "test\n";
+        const char reply[] = "test";
 
+        printf("enter accept\n");
         int client = accept(sock, (struct sockaddr*)&addr, &len);
         if (client < 0) {
             perror("Unable to accept");
+            printf("Unnable to accept\n");
             exit(EXIT_FAILURE);
         }
 
@@ -99,7 +102,9 @@ int main(int argc, char **argv)
 
         if (SSL_accept(ssl) <= 0) {
             ERR_print_errors_fp(stderr);
+            printf("error\n");
         } else {
+            printf("SSL_write %s\n",reply);
             SSL_write(ssl, reply, strlen(reply));
         }
 
